@@ -25,7 +25,7 @@ namespace AbilityAntsPlugin
     {
         [return : MarshalAs(UnmanagedType.U1)]
         private delegate bool OnDrawAntsDetour(IntPtr self, int at, uint ActionID);
-        public string Name => "Action Ants Plugin";
+        public string Name => "Ability Ants Plugin";
 
         private const string commandName = "/pants";
 
