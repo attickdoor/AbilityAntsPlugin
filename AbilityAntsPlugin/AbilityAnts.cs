@@ -35,23 +35,21 @@ namespace AbilityAntsPlugin
 
         private Hook<OnDrawAntsDetour> DrawAntsHook;
         private unsafe ActionManager* AM;
-        //private readonly AbilityAntsAddressResolver Address;
         public ClientState ClientState => Services.ClientState;
         public Condition Condition => Services.Condition;
         public Framework Framework => Services.Framework;
         public SigScanner Scanner => Services.Scanner;
         private CommandManager CommandManager => Services.CommandManager;
+        
+        private bool InCombat => Condition[ConditionFlag.InCombat];
 
-        //private List<ClassJob> Jobs;
         private Dictionary<uint, Action> CachedActions;
-        //private List<Action> RoleActions;
 
         public AbilityAnts(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
             [RequiredVersion("1.0")] ClientState clientState,
             [RequiredVersion("1.0")] CommandManager commandManager)
         {
-            //pluginInterface.Create<AbilityAnts>();
             Services.Initialize(pluginInterface);
             this.PluginInterface = pluginInterface;
 
@@ -59,9 +57,6 @@ namespace AbilityAntsPlugin
             this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             this.Configuration.Initialize(this.PluginInterface);
 
-            // you might normally want to embed resources and load them from the manifest stream
-            //var imagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
-            //var goatImage = this.PluginInterface.UiBuilder.LoadImage(imagePath);
             this.PluginUi = new AbilityAntsUI(this.Configuration);
 
             CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
@@ -99,7 +94,6 @@ namespace AbilityAntsPlugin
 
         private void OnCommand(string command, string args)
         {
-            // in response to the slash command, just display our main ui
             this.PluginUi.Visible = true;
         }
 
@@ -110,7 +104,7 @@ namespace AbilityAntsPlugin
 
         private void DrawConfigUI()
         {
-            this.PluginUi.SettingsVisible = true;
+            this.PluginUi.Visible = true;
         }
 
         public unsafe void OnLogin(object sender, EventArgs args)
@@ -138,7 +132,6 @@ namespace AbilityAntsPlugin
             if (ret)
                 return ret;
             ActionType at = (ActionType)actionType;
-            //bool ret = DrawAntsHook.Original(self, at, actionID);
             if (at != ActionType.Spell)
                 return ret;
             if (Configuration.ShowOnlyInCombat && !InCombat)
@@ -169,7 +162,6 @@ namespace AbilityAntsPlugin
             return ret;
 
         }
-        private bool InCombat => Condition[ConditionFlag.InCombat];
 
         private unsafe int AvailableCharges(Action action, ushort maxCharges)
         {
