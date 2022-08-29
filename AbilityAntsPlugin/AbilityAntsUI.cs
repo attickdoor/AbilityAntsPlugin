@@ -94,7 +94,7 @@ namespace AbilityAntsPlugin
                 }
                 
                 bool lastCharge = Configuration.AntOnFinalStack;
-                if (ImGui.Checkbox("Charged actions only get ants for the final charge", ref lastCharge))
+                if (ImGui.Checkbox("Charged abilities only get ants for the final charge", ref lastCharge))
                 {
                     Configuration.AntOnFinalStack = lastCharge;
                 }
