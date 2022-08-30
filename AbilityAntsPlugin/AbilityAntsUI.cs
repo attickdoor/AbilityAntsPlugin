@@ -56,9 +56,26 @@ namespace AbilityAntsPlugin
             JobActions = new();
             foreach(var job in Jobs)
             {
-                JobActions[job.RowId] = Services.DataManager.GetExcelSheet<Action>()!.
-                    Where(a => !a.IsPvP && a.ClassJob.Value?.ExpArrayIndex == job.ExpArrayIndex && a.IsPlayerAction && (a.ActionCategory.Row == 4 || a.Recast100ms > 100)).ToList();
-                JobActions[job.RowId].Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
+                // SMN
+                if (job.RowId == 27)
+                {
+                    JobActions[job.RowId] = Services.DataManager.GetExcelSheet<Action>()!.
+                    Where(a => !a.IsPvP && (a.ClassJob.Row == 26 || a.ClassJob.Row == 27) && a.IsPlayerAction && (a.ActionCategory.Row == 4 || a.Recast100ms > 100)).ToList();
+                    JobActions[job.RowId].Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
+                }
+                // SCH
+                else if (job.RowId == 28)
+                {
+                    JobActions[job.RowId] = Services.DataManager.GetExcelSheet<Action>()!.
+                    Where(a => !a.IsPvP && a.ClassJob.Row == 28 && a.IsPlayerAction && (a.ActionCategory.Row == 4 || a.Recast100ms > 100)).ToList();
+                    JobActions[job.RowId].Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
+                }
+                else
+                {
+                    JobActions[job.RowId] = Services.DataManager.GetExcelSheet<Action>()!.
+                        Where(a => !a.IsPvP && a.ClassJob.Value?.ExpArrayIndex == job.ExpArrayIndex && a.IsPlayerAction && (a.ActionCategory.Row == 4 || a.Recast100ms > 100) && a.RowId != 29581).ToList();
+                    JobActions[job.RowId].Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
+                }
             }
             RoleActions = Services.DataManager.GetExcelSheet<Action>()!.Where(a => a.IsRoleAction && a.ClassJobLevel != 0).ToList();
             RoleActions.Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
