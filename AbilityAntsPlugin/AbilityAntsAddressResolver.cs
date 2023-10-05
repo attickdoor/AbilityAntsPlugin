@@ -11,7 +11,7 @@ namespace AbilityAntsPlugin
     {
         public static IntPtr ShouldDrawAnts { get; private set; }
 
-        public static void Setup64Bit(SigScanner scanner)
+        public static void Setup64Bit(ISigScanner scanner)
         {
             ShouldDrawAnts = scanner.ScanText("E8 ?? ?? ?? ?? 48 8B CB 88 47 41");
         }
