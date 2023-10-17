@@ -1,6 +1,6 @@
 ﻿using AbilityAnts;
 using Dalamud.Game;
-using Dalamud.Game.ClientState;
+using Dalamud.Plugin.Services;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Command;
 using Dalamud.Hooking;
@@ -17,7 +17,6 @@ using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using Action = Lumina.Excel.GeneratedSheets.Action;
-using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 
 namespace AbilityAntsPlugin
 {
@@ -35,20 +34,21 @@ namespace AbilityAntsPlugin
 
         private Hook<OnDrawAntsDetour> DrawAntsHook;
         private unsafe ActionManager* AM;
-        public ClientState ClientState => Services.ClientState;
-        public Condition Condition => Services.Condition;
-        public Framework Framework => Services.Framework;
-        public SigScanner Scanner => Services.Scanner;
-        private CommandManager CommandManager => Services.CommandManager;
-        
+        public IClientState ClientState => Services.ClientState;
+        public ICondition Condition => Services.Condition;
+        public IFramework Framework => Services.Framework;
+        public ISigScanner Scanner => Services.Scanner;
+        private ICommandManager CommandManager => Services.CommandManager;
+        private IGameInteropProvider GameInteropProvider => Services.GameInteropProvider;
+
         private bool InCombat => Condition[ConditionFlag.InCombat];
 
         private Dictionary<uint, Action> CachedActions;
 
         public AbilityAnts(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] ClientState clientState,
-            [RequiredVersion("1.0")] CommandManager commandManager)
+            [RequiredVersion("1.0")] IClientState clientState,
+            [RequiredVersion("1.0")] ICommandManager commandManager)
         {
             Services.Initialize(pluginInterface);
             this.PluginInterface = pluginInterface;
@@ -70,10 +70,10 @@ namespace AbilityAntsPlugin
             ClientState.Logout += OnLogout;
 
             if (ClientState.IsLoggedIn)
-                OnLogin(null, null);
+                OnLogin();
 
             AbilityAntsAddressResolver.Setup64Bit(Scanner);
-            DrawAntsHook = Hook<OnDrawAntsDetour>.FromAddress(AbilityAntsAddressResolver.ShouldDrawAnts, HandleAntCheck);
+            DrawAntsHook = GameInteropProvider.HookFromAddress<OnDrawAntsDetour>(AbilityAntsAddressResolver.ShouldDrawAnts, HandleAntCheck);
 
             CacheActions();
 
@@ -107,7 +107,7 @@ namespace AbilityAntsPlugin
             this.PluginUi.Visible = true;
         }
 
-        public unsafe void OnLogin(object sender, EventArgs args)
+        public unsafe void OnLogin()
         {
             try
             {
@@ -119,7 +119,7 @@ namespace AbilityAntsPlugin
             }
         }
 
-        public unsafe void OnLogout(object sender, EventArgs args)
+        public unsafe void OnLogout()
         {
             AM = null;
         }
@@ -132,7 +132,7 @@ namespace AbilityAntsPlugin
             if (ret)
                 return ret;
             ActionType at = (ActionType)actionType;
-            if (at != ActionType.Spell)
+            if (at != ActionType.Action)
                 return ret;
             if (Configuration.ShowOnlyInCombat && !InCombat)
                 return ret;

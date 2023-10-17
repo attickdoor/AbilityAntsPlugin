@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Action = Lumina.Excel.GeneratedSheets.Action;
+using Dalamud.Interface.Internal;
 
 namespace AbilityAntsPlugin
 { 
@@ -42,7 +43,7 @@ namespace AbilityAntsPlugin
         private ClassJob SelectedJob = null;
         private Dictionary<uint, List<Action>> JobActions;
         private List<Action> RoleActions;
-        private Dictionary<uint, TextureWrap?> LoadedIcons;
+        private Dictionary<uint, IDalamudTextureWrap?> LoadedIcons;
 
         // passing in the image here just for simplicity
         public AbilityAntsUI(Configuration configuration)
@@ -233,14 +234,14 @@ namespace AbilityAntsPlugin
             LoadedIcons = new();
             foreach (var action in RoleActions)
             {
-                TextureWrap? tw = Services.DataManager.GetImGuiTextureIcon(action.Icon);
+                IDalamudTextureWrap? tw = Services.TextureProvider.GetIcon(action.Icon);
                 LoadedIcons[action.RowId] = tw;
             }
             foreach (var (_, v) in JobActions)
             {
                 foreach (var action in v)
                 {
-                    TextureWrap? tw = Services.DataManager.GetImGuiTextureIcon(action.Icon);
+                    IDalamudTextureWrap? tw = Services.TextureProvider.GetIcon(action.Icon);
                     LoadedIcons[action.RowId] = tw;
                 }
             }
