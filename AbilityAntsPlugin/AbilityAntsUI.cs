@@ -1,10 +1,5 @@
 ﻿using AbilityAnts;
-using Dalamud.Data;
 using ImGuiNET;
-using ImGuiScene;
-using Lumina.Data;
-using Lumina.Excel;
-using Lumina;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
@@ -14,7 +9,7 @@ using Action = Lumina.Excel.GeneratedSheets.Action;
 using Dalamud.Interface.Internal;
 
 namespace AbilityAntsPlugin
-{ 
+{
     // It is good to have this be disposable in general, in case you ever need it
     // to do any cleanup
     class AbilityAntsUI : IDisposable
@@ -110,7 +105,14 @@ namespace AbilityAntsPlugin
                     Configuration.ShowOnlyInCombat = showCombat;
                     Configuration.Save();
                 }
-                
+
+                bool showUsable = Configuration.ShowOnlyUsableActions;
+                if (ImGui.Checkbox("Only show custom ants for actions your character can use (job level restriction).", ref showUsable))
+                {
+                    Configuration.ShowOnlyUsableActions = showUsable;
+                    Configuration.Save();
+                }
+
                 bool lastCharge = Configuration.AntOnFinalStack;
                 if (ImGui.Checkbox("Charged abilities only get ants for the final charge", ref lastCharge))
                 {

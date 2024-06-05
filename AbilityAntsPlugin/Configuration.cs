@@ -12,6 +12,7 @@ namespace AbilityAntsPlugin
         public int PreAntTimeMs { get; set; } = 3000;
         public bool ShowOnlyInCombat { get; set; } = true;
         public bool AntOnFinalStack { get; set; } = true;
+        public bool ShowOnlyUsableActions { get; set; } = false;
         public Dictionary<uint, int> ActiveActions { get; private set; }
 
         // the below exist just to make saving less cumbersome

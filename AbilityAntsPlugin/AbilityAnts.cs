@@ -7,16 +7,12 @@ using Dalamud.Hooking;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime;
 using System.Runtime.InteropServices;
 using Action = Lumina.Excel.GeneratedSheets.Action;
+using Dalamud.Logging;
 
 namespace AbilityAntsPlugin
 {
@@ -145,8 +141,13 @@ namespace AbilityAntsPlugin
                 float recastElapsed = AM->GetRecastTimeElapsed(at, actionID);
                 var maxCharges = ActionManager.GetMaxCharges((uint)actionID, ClientState.LocalPlayer.Level);
 
+                if (Configuration.ShowOnlyUsableActions && 
+                    action.ClassJobLevel > ClientState.LocalPlayer.Level)
+                    return false;
+
                 if (!recastActive && maxCharges == 0)
                     return true;
+
                 if (maxCharges > 0)
                 {                     
                     if (!Configuration.AntOnFinalStack)
