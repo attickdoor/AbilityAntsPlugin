@@ -1,16 +1,7 @@
-﻿using Dalamud.Data;
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Plugin.Services;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AbilityAnts
 {
