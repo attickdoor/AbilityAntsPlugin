@@ -24,7 +24,7 @@ namespace AbilityAntsPlugin
 
         private const string commandName = "/pants";
 
-        private DalamudPluginInterface PluginInterface { get; init; }
+        private IDalamudPluginInterface PluginInterface { get; init; }
         private Configuration Configuration { get; init; }
         private AbilityAntsUI PluginUi { get; init; }
 
@@ -42,9 +42,9 @@ namespace AbilityAntsPlugin
         private Dictionary<uint, Action> CachedActions;
 
         public AbilityAnts(
-            [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] IClientState clientState,
-            [RequiredVersion("1.0")] ICommandManager commandManager)
+            IDalamudPluginInterface pluginInterface,
+            IClientState clientState,
+            ICommandManager commandManager)
         {
             Services.Initialize(pluginInterface);
             this.PluginInterface = pluginInterface;
