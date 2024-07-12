@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
+using Dalamud.Interface.Textures;
 using Action = Lumina.Excel.GeneratedSheets.Action;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 
 namespace AbilityAntsPlugin
 {
@@ -75,8 +77,6 @@ namespace AbilityAntsPlugin
             }
             RoleActions = Services.DataManager.GetExcelSheet<Action>()!.Where(a => a.IsRoleAction && a.ClassJobLevel != 0).ToList();
             RoleActions.Sort((lhs, rhs) => lhs.Name.RawString.CompareTo(rhs.Name.RawString));
-
-            CacheIcons();
         }
 
         public void Dispose()
@@ -227,26 +227,9 @@ namespace AbilityAntsPlugin
 
         void DrawIcon(Action action)
         {
-            var texture = LoadedIcons[action.RowId];
-            ImGui.Image(texture.ImGuiHandle, new(texture.Width, texture.Height));
-        }
-
-        void CacheIcons()
-        {
-            LoadedIcons = new();
-            foreach (var action in RoleActions)
-            {
-                IDalamudTextureWrap? tw = Services.TextureProvider.GetIcon(action.Icon);
-                LoadedIcons[action.RowId] = tw;
-            }
-            foreach (var (_, v) in JobActions)
-            {
-                foreach (var action in v)
-                {
-                    IDalamudTextureWrap? tw = Services.TextureProvider.GetIcon(action.Icon);
-                    LoadedIcons[action.RowId] = tw;
-                }
-            }
+            GameIconLookup lookup = new GameIconLookup(action.Icon);
+            IDalamudTextureWrap? tw = Services.TextureProvider.GetFromGameIcon(lookup).GetWrapOrDefault();
+            ImGui.Image(tw.ImGuiHandle, new(tw.Width, tw.Height));
         }
     }
 
