@@ -114,6 +114,16 @@ public class ConfigWindow : Window, IDisposable
             _configuration.Save();
         }
 
+        bool showWhileCasting = _configuration.ShowAntsWhileCasting;
+        if (ImGui.Checkbox("Don't hide ants while you're casting", ref showWhileCasting))
+        {
+            _configuration.ShowAntsWhileCasting = showWhileCasting;
+            _configuration.Save();
+        }
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("While you're casting, the game normally reports every action as unusable, which hides all ants.\n" +
+                             "Enable this to keep ants reflecting each ability's cooldown during a cast, instead of blinking off until the cast ends.");
+
         bool lastCharge = _configuration.AntOnFinalStack;
         if (ImGui.Checkbox("Charged abilities only get ants for the final charge", ref lastCharge))
         {

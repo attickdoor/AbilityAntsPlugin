@@ -123,7 +123,10 @@ namespace AbilityAntsPlugin
             if (ret || actionType != ActionType.Action || Configuration.ShowOnlyInCombat && !InCombat)
                 return ret;
 
-            if (actionManager->GetActionStatus(actionType, actionID, ObjectTable.LocalPlayer.GameObjectId, false) != 0) return ret;
+            // checkRecastActive: false (we do recast math below). checkCastingActive follows the setting: ignoring the cast
+            // lock keeps ants on during a cast (ant means "off cooldown" vs "usable now"), instead of flicking off-on, e.g. oGCD spam.
+            if (actionManager->GetActionStatus(actionType, actionID, ObjectTable.LocalPlayer.GameObjectId, false, !Configuration.ShowAntsWhileCasting) != 0)
+                return ret;
 
             if (Configuration.ActiveActions.ContainsKey(actionID))
             {
